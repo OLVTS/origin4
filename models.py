@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, BigInteger, String, Enum as PgEnum
+from sqlalchemy import Column, Integer, BigInteger, String, Enum as PgEnum, ForeignKey
 from sqlalchemy.orm import declarative_base
 import enum
 
@@ -17,7 +17,6 @@ class User(Base):
     tg_id = Column(BigInteger, unique=True, nullable=False)
     role = Column(PgEnum(UserRole), nullable=False, default=UserRole.user)
 
-
 # 📦 Статус объекта недвижимости
 class PropertyStatus(enum.Enum):
     available = "В продаже"
@@ -25,7 +24,7 @@ class PropertyStatus(enum.Enum):
     price_changed = "Снижение/Повышение цены"
     removed = "Снято с продажи"
 
-# 🏠 Модель объекта недвижимости (минимум)
+# 🏠 Модель объекта недвижимости
 class Property(Base):
     __tablename__ = "properties"
 
@@ -33,4 +32,6 @@ class Property(Base):
     title = Column(String, nullable=False)
     description = Column(String)
     status = Column(PgEnum(PropertyStatus), default=PropertyStatus.available)
-    created_by = Column(BigInteger, nullable=False)  # Telegram ID
+    
+    # 👤 ID пользователя, который создал объект
+    created_by = Column(BigInteger, ForeignKey("users.tg_id"), nullable=False)
