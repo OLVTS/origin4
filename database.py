@@ -1,12 +1,16 @@
-# database.py
-
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.orm import sessionmaker
-from config import DATABASE_URL
-from db_base import Base  # ⬅️ ИЗ db_base.py, НЕ из models.py
+from sqlalchemy.orm import sessionmaker, declarative_base
 
-engine = create_async_engine(DATABASE_URL, echo=False, future=True)
-AsyncSessionLocal = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+DATABASE_URL = "postgresql+asyncpg://postgres:rvFXEjFPTnnjfuMSiVqKSBweNUKhHnaf@centerbeam.proxy.rlwy.net:34016/railway"
+
+engine = create_async_engine(DATABASE_URL, echo=False)
+Base = declarative_base()
+
+AsyncSessionLocal = sessionmaker(
+    bind=engine,
+    expire_on_commit=False,
+    class_=AsyncSession,
+)
 
 async def init_db():
     async with engine.begin() as conn:
