@@ -1,15 +1,36 @@
-# models.py
-
-from sqlalchemy import Column, BigInteger, Enum as SQLAEnum
-from db_base import Base  # ⬅️ Тоже импорт из db_base
+from sqlalchemy import Column, Integer, BigInteger, String, Enum as PgEnum
+from sqlalchemy.orm import declarative_base
 import enum
 
+Base = declarative_base()
+
+# 👤 Роли пользователей
 class UserRole(enum.Enum):
     admin = "admin"
     user = "user"
 
+# 👤 Модель пользователя
 class User(Base):
     __tablename__ = "users"
 
-    tg_id = Column(BigInteger, primary_key=True)
-    role = Column(SQLAEnum(UserRole), nullable=False)
+    id = Column(Integer, primary_key=True)
+    tg_id = Column(BigInteger, unique=True, nullable=False)
+    role = Column(PgEnum(UserRole), nullable=False, default=UserRole.user)
+
+
+# 📦 Статус объекта недвижимости
+class PropertyStatus(enum.Enum):
+    available = "В продаже"
+    sold = "Продано"
+    price_changed = "Снижение/Повышение цены"
+    removed = "Снято с продажи"
+
+# 🏠 Модель объекта недвижимости (минимум)
+class Property(Base):
+    __tablename__ = "properties"
+
+    id = Column(Integer, primary_key=True)
+    title = Column(String, nullable=False)
+    description = Column(String)
+    status = Column(PgEnum(PropertyStatus), default=PropertyStatus.available)
+    created_by = Column(BigInteger, nullable=False)  # Telegram ID
