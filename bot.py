@@ -90,8 +90,12 @@ async def show_users(callback: types.CallbackQuery):
             [f"• `{user.tg_id}` – {user.role.value}" for user in users]
         )
 
+    back_keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="🔙 Назад", callback_data="admin_back")]
+    ])
+
     await callback.answer()
-    await callback.message.edit_text(text, parse_mode=ParseMode.MARKDOWN)
+    await callback.message.edit_text(text, parse_mode=ParseMode.MARKDOWN, reply_markup=back_keyboard)
     await session.close()
 
 # Обработка кнопки "Назад"
