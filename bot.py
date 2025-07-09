@@ -7,7 +7,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 
 from config import BOT_TOKEN, ADMIN_IDS
-from database import AsyncSessionLocal
+from database import AsyncSessionLocal, init_db
 from models import User, UserRole
 
 dp = Dispatcher(storage=MemoryStorage())
