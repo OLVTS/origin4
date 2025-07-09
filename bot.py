@@ -39,6 +39,7 @@ async def cmd_start(message: Message):
 if __name__ == "__main__":
     async def main():
         print("Бот запущен...")
+        await init_db()
         await dp.start_polling(bot)
 
     asyncio.run(main())
