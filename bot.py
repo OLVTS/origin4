@@ -204,6 +204,7 @@ async def cancel_add(callback: types.CallbackQuery, state: FSMContext):
 if __name__ == "__main__":
     async def main():
         print("Бот запущен...")
+        import models  # ← ОБЯЗАТЕЛЬНО, иначе SQLAlchemy не узнает про модели
         await init_db()
         await dp.start_polling(bot)
 
