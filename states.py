@@ -1,4 +1,4 @@
-from aiogram.fsm.state import StatesGroup, State
+from aiogram.fsm.state import State, StatesGroup
 
 class AddProperty(StatesGroup):
     location = State()
@@ -8,4 +8,6 @@ class AddProperty(StatesGroup):
     bathrooms = State()
     additions = State()
     price = State()
+    title = State()
+    media = State()
     confirm = State()
