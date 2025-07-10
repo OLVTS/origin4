@@ -1,6 +1,8 @@
-from sqlalchemy import Column, Integer, BigInteger, String, Enum as PgEnum, ForeignKey
-from db_base import Base  # Убедись, что Base импортирован из общего модуля db_base
+from sqlalchemy import Column, Integer, BigInteger, String, Enum as PgEnum, ForeignKey, DateTime, Boolean
+from sqlalchemy.orm import relationship
+from db_base import Base
 import enum
+from datetime import datetime
 
 # 👤 Роли пользователей
 class UserRole(enum.Enum):
@@ -13,9 +15,14 @@ class User(Base):
 
     id = Column(Integer, primary_key=True)
     tg_id = Column(BigInteger, unique=True, nullable=False)
-    name = Column(String, nullable=True)  # имя пользователя
-    phone = Column(String, nullable=True)  # телефон пользователя
+    name = Column(String, nullable=True)
+    phone = Column(String, nullable=True)
     role = Column(PgEnum(UserRole), nullable=False, default=UserRole.user)
+
+    created_at = Column(DateTime, default=datetime.utcnow)  # ⏱ Дата регистрации
+    is_active = Column(Boolean, default=True)               # ✅ Статус активности
+
+    properties = relationship("Property", back_populates="creator")  # 🔗 Связь с объектами
 
 # 📦 Статус объекта недвижимости
 class PropertyStatus(enum.Enum):
@@ -32,4 +39,8 @@ class Property(Base):
     title = Column(String, nullable=False)
     description = Column(String)
     status = Column(PgEnum(PropertyStatus), default=PropertyStatus.available)
-    created_by = Column(BigInteger, ForeignKey("users.tg_id"), nullable=False)  # ID создателя
+
+    created_by = Column(BigInteger, ForeignKey("users.tg_id"), nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)  # ⏱ Дата создания объекта
+
+    creator = relationship("User", back_populates="properties")  # 🔗 Обратная связь с пользователем
