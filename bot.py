@@ -71,6 +71,50 @@ async def show_users(callback: types.CallbackQuery):
 
 # --- /start ---
 @dp.message(F.text == "/start")
+# --- Команда /my_objects ---
+@dp.message(F.text == "/my_objects")
+async def show_my_objects(message: Message):
+    session = AsyncSessionLocal()
+    stmt = select(Property).where(Property.created_by == message.from_user.id)
+    result = await session.execute(stmt)
+    objects = result.scalars().all()
+    await session.close()
+
+    if not objects:
+        await message.answer("🔎 У вас пока нет объектов.")
+        return
+
+    for obj in objects:
+        text = f"📍 *{obj.title}*\n💰 *{obj.description or 'Без описания'}*"
+        keyboard = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="✏️ Редактировать", callback_data=f"edit_{obj.id}")],
+            [InlineKeyboardButton(text="❌ Удалить", callback_data=f"delete_{obj.id}")]
+        ])
+        await message.answer(text, parse_mode=ParseMode.MARKDOWN, reply_markup=keyboard)
+
+
+# --- Команда /all_objects (только для админа) ---
+@dp.message(F.text == "/all_objects")
+@admin_only
+async def show_all_objects(message: Message):
+    session = AsyncSessionLocal()
+    stmt = select(Property)
+    result = await session.execute(stmt)
+    objects = result.scalars().all()
+    await session.close()
+
+    if not objects:
+        await message.answer("🔎 Объекты не найдены.")
+        return
+
+    for obj in objects:
+        text = f"📍 *{obj.title}*\n💰 *{obj.description or 'Без описания'}*\n👤 ID автора: `{obj.created_by}`"
+        keyboard = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="✏️ Редактировать", callback_data=f"edit_{obj.id}")],
+            [InlineKeyboardButton(text="❌ Удалить", callback_data=f"delete_{obj.id}")]
+        ])
+        await message.answer(text, parse_mode=ParseMode.MARKDOWN, reply_markup=keyboard)
+
 async def cmd_start(message: Message):
     tg_id = message.from_user.id
     async with AsyncSessionLocal() as session:
