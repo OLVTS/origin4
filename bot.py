@@ -116,7 +116,7 @@ async def step_location(message: types.Message, state: FSMContext):
     await state.update_data(location=message.text, media=[])
     await state.set_state(AddProperty.media)
     kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton("✅ Завершить загрузку", callback_data="finish_media")]
+        InlineKeyboardButton(text="✅ Завершить загрузку", callback_data="finish_media")
     ])
     await message.answer("📸 Прикрепите фото/видео объекта и нажмите кнопку.", reply_markup=kb)
 
