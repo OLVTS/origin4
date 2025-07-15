@@ -1,14 +1,17 @@
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
-from db_base import Base  # <-- тоже импорт из db_base
-from config import DATABASE_URL  # если перенесёшь URL в config.py
+from db_base import Base
+from config import DATABASE_URL
 
-engine = create_async_engine(DATABASE_URL, echo=False)
+engine = create_async_engine(
+    DATABASE_URL,
+    echo=bool(int(__debug__))  # echo=True только при дебаге
+)
 
 AsyncSessionLocal = sessionmaker(
     bind=engine,
-    expire_on_commit=False,
     class_=AsyncSession,
+    expire_on_commit=False,
 )
 
 async def init_db():
