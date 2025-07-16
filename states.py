@@ -10,3 +10,7 @@ class AddProperty(StatesGroup):
     additions = State()
     price = State()
     confirm = State()
+
+class EditProperty(StatesGroup):
+    field = State()
+    value = State()
