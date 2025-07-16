@@ -7,12 +7,14 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
 from sqlalchemy import select, delete
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
+import logging
 
 from config import BOT_TOKEN, ADMIN_IDS, CHANNEL_USERNAME
 from database import AsyncSessionLocal, init_db
 from models import User, UserRole, Property, PropertyStatus
 from states import AddProperty, EditProperty
 
+logging.basicConfig(level=logging.INFO)
 dp = Dispatcher(storage=MemoryStorage())
 bot = Bot(token=BOT_TOKEN, parse_mode=ParseMode.MARKDOWN)
 
@@ -445,7 +447,7 @@ if __name__ == "__main__":
     async def main():
         import models  # регистрация моделей
         await init_db()  # создаём таблицы
-        print("Бот запущен...")
+        logging.info("Бот запущен...")
         await dp.start_polling(bot)
 
     asyncio.run(main())
