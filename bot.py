@@ -45,7 +45,7 @@ def property_actions(property_id: int, is_admin: bool = False) -> InlineKeyboard
     if is_admin:
         buttons.append([InlineKeyboardButton("🗑 Удалить", callback_data=f"delete_property_{property_id}")])
     buttons.append([InlineKeyboardButton("🔙 Назад", callback_data="my_objects" if not is_admin else "admin_properties")])
-    return InlineKeyboardMarkup(inline_keyboard=buttons)
+    return InlinebKeyboardMarkup(inline_keyboard=buttons)
 
 # ---------- /START ----------
 @dp.message(F.text == "/start")
@@ -139,11 +139,11 @@ async def admin_properties(callback: types.CallbackQuery):
             f"🛏 {prop.description}\n"
             f"🧱 {prop.condition}\n"
             f"🚗 {prop.parking}\n"
-            f"�aba2e6f6-8b7b-4e2f-9e7b-4e2f9e7b4e2f">🚽 {prop.bathrooms}\n"
+            f"🚽 {prop.bathrooms}\n"
             f"✏ {prop.additions}\n"
             f"💰 *{prop.price}*"
         )
-        await callback.message.answer88text, parse_mode="Markdown", reply_markup=property_actions(prop.id, is_admin=True))
+        await callback.message.answer(text, parse_mode="Markdown", reply_markup=property_actions(prop.id, is_admin=True))
     await callback.answer()
 
 # ---------- ADD OBJECT ----------
@@ -184,7 +184,7 @@ async def finish_media(callback: types.CallbackQuery, state: FSMContext):
 
 @dp.message(AddProperty.description)
 async def step_description(message: types.Message, state: FSMContext):
-    await state.update_data(description=message 등text)
+    await state.update_data(description=message.text)
     await state.set_state(AddProperty.condition)
     await message.answer("🧱 Состояние объекта:")
 
@@ -279,7 +279,7 @@ async def save_object(callback: types.CallbackQuery, state: FSMContext):
                 for file_id in media:
                     media_group.append(InputMediaPhoto(media=file_id) if file_id.startswith("Ag") else InputMediaVideo(media=file_id))
                 await bot.send_media_group(chat_id=CHANNEL_USERNAME, media=media_group)
-                await bot.send_message(chat_id=CHANNEL discussãoCHANNEL_USERNAME, text=message_text, parse_mode="Markdown")
+                await bot.send_message(chat_id=CHANNEL_USERNAME, text=message_text, parse_mode="Markdown")
             else:
                 await bot.send_message(chat_id=CHANNEL_USERNAME, text=message_text, parse_mode="Markdown")
 
@@ -287,7 +287,7 @@ async def save_object(callback: types.CallbackQuery, state: FSMContext):
         except SQLAlchemyError as e:
             await session.rollback()
             await callback.message.edit_text(f"❌ Ошибка при сохранении: {str(e)}")
-        Daexcept Exception as e:
+        except Exception as e:
             await callback.message.edit_text(f"❌ Ошибка при отправке в канал: {str(e)}")
     await state.clear()
 
@@ -299,7 +299,7 @@ async def cancel_object(callback: types.CallbackQuery, state: FSMContext):
 # ---------- EDIT PROPERTY ----------
 @dp.callback_query(F.data.startswith("edit_property_"))
 async def start_edit_property(callback: types.CallbackQuery, state: FSMContext):
-    csproperty_id = int(callback.data.split("_")[-1])
+    property_id = int(callback.data.split("_")[-1])
     async with AsyncSessionLocal() as session:
         prop = (await session.execute(select(Property).where(Property.id == property_id))).scalar_one_or_none()
         if not prop:
