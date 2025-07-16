@@ -4,8 +4,7 @@ from aiogram import Bot, Dispatcher, F, types
 from aiogram.enums import ParseMode
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.storage.memory import MemoryStorage
-from aiogram.types import (InlineKeyboardMarkup, InlineKeyboardButton,
-                           ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove)
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
 from sqlalchemy import select, delete
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
@@ -34,18 +33,18 @@ def admin_only(handler):
 # ---------- MENUS ----------
 def admin_menu() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton("📋 Список пользователей", callback_data="admin_users")],
-        [InlineKeyboardButton("🏠 Все объекты", callback_data="admin_properties")],
-        [InlineKeyboardButton("📄 Добавить объект", callback_data="admin_add")],
-        [InlineKeyboardButton("🔙 Назад в меню", callback_data="admin_back")]
+        [InlineKeyboardButton(text="📋 Список пользователей", callback_data="admin_users")],
+        [InlineKeyboardButton(text="🏠 Все объекты", callback_data="admin_properties")],
+        [InlineKeyboardButton(text="📄 Добавить объект", callback_data="admin_add")],
+        [InlineKeyboardButton(text="🔙 Назад в меню", callback_data="admin_back")]
     ])
 
 def property_actions(property_id: int, is_admin: bool = False) -> InlineKeyboardMarkup:
-    buttons = [[InlineKeyboardButton("✏ Редактировать", callback_data=f"edit_property_{property_id}")]]
+    buttons = [[InlineKeyboardButton(text="✏ Редактировать", callback_data=f"edit_property_{property_id}")]]
     if is_admin:
-        buttons.append([InlineKeyboardButton("🗑 Удалить", callback_data=f"delete_property_{property_id}")])
-    buttons.append([InlineKeyboardButton("🔙 Назад", callback_data="my_objects" if not is_admin else "admin_properties")])
-    return InlinebKeyboardMarkup(inline_keyboard=buttons)
+        buttons.append([InlineKeyboardButton(text="🗑 Удалить", callback_data=f"delete_property_{property_id}")])
+    buttons.append([InlineKeyboardButton(text="🔙 Назад", callback_data="my_objects" if not is_admin else "admin_properties")])
+    return InlineKeyboardMarkup(inline_keyboard=buttons)
 
 # ---------- /START ----------
 @dp.message(F.text == "/start")
@@ -67,7 +66,8 @@ async def cmd_start(message: types.Message):
                                 parse_mode="Markdown")
         else:
             await message.answer("👋 С возвращением!\n"
-                                "Используй /add_object для добавления объекта или /my_objects для просмотра своих объектов.")
+                                "Используй /add_object для добавления объекта или /my_objects для просмотра своих объектов.",
+                                parse_mode="Markdown")
 
         if tg_id in ADMIN_IDS:
             await message.answer("🛠 Админ-меню", reply_markup=admin_menu())
@@ -233,8 +233,8 @@ async def step_price(message: types.Message, state: FSMContext):
             f"💰 *{data['price']}*"
         )
         kb = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton("✅ Сохранить", callback_data="save_object")],
-            [InlineKeyboardButton("❌ Отменить", callback_data="cancel_object")]
+            [InlineKeyboardButton(text="✅ Сохранить", callback_data="save_object")],
+            [InlineKeyboardButton(text="❌ Отменить", callback_data="cancel_object")]
         ])
         await state.set_state(AddProperty.confirm)
         await message.answer(preview, parse_mode="Markdown", reply_markup=kb)
@@ -312,15 +312,15 @@ async def start_edit_property(callback: types.CallbackQuery, state: FSMContext):
     await state.update_data(property_id=property_id)
     await state.set_state(EditProperty.field)
     kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton("📍 Локация", callback_data="edit_field_location")],
-        [InlineKeyboardButton("🛏 Описание", callback_data="edit_field_description")],
-        [InlineKeyboardButton("🧱 Состояние", callback_data="edit_field_condition")],
-        [InlineKeyboardButton("🚗 Парковка", callback_data="edit_field_parking")],
-        [InlineKeyboardButton("🚽 Санузлы", callback_data="edit_field_bathrooms")],
-        [InlineKeyboardButton("✏ Дополнения", callback_data="edit_field_additions")],
-        [InlineKeyboardButton("💰 Цена", callback_data="edit_field_price")],
-        [InlineKeyboardButton("📸 Медиа", callback_data="edit_field_media")],
-        [InlineKeyboardButton("✅ Завершить", callback_data="finish_edit")]
+        [InlineKeyboardButton(text="📍 Локация", callback_data="edit_field_location")],
+        [InlineKeyboardButton(text="🛏 Описание", callback_data="edit_field_description")],
+        [InlineKeyboardButton(text="🧱 Состояние", callback_data="edit_field_condition")],
+        [InlineKeyboardButton(text="🚗 Парковка", callback_data="edit_field_parking")],
+        [InlineKeyboardButton(text="🚽 Санузлы", callback_data="edit_field_bathrooms")],
+        [InlineKeyboardButton(text="✏ Дополнения", callback_data="edit_field_additions")],
+        [InlineKeyboardButton(text="💰 Цена", callback_data="edit_field_price")],
+        [InlineKeyboardButton(text="📸 Медиа", callback_data="edit_field_media")],
+        [InlineKeyboardButton(text="✅ Завершить", callback_data="finish_edit")]
     ])
     await callback.message.edit_text("✏ Выберите поле для редактирования:", reply_markup=kb)
     await callback.answer()
