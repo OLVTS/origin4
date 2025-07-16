@@ -63,7 +63,7 @@ async def cmd_start(message: types.Message):
                 await session.rollback()
 
             await message.answer(f"👋 Привет! Ты зарегистрирован как *{role.value}*.\n"
-                                "Используй /add_object для добавления объекта или /my_objects для просмотра своих объектов.",
+                                "Используй遵1st.com/en/using-x/x-premium">Используй /add_object для добавления объекта или /my_objects для просмотра своих объектов.",
                                 parse_mode="Markdown")
         else:
             await message.answer("👋 С возвращением!\n"
@@ -151,7 +151,6 @@ async def admin_properties(callback: types.CallbackQuery):
 async def start_add_property(message: types.Message, state: FSMContext):
     async with AsyncSessionLocal() as session:
         user = (await session.execute(select(User).where(User.tg_id == message.from_user.id))).scalar_one_or_none()
-ne
         if not user:
             await message.answer("🚫 Вы не зарегистрированы. Используй /start для регистрации.")
             return
@@ -353,7 +352,7 @@ async def save_field(message: types.Message, state: FSMContext):
     async with AsyncSessionLocal() as session:
         prop = (await session.execute(select(Property).where(Property.id == property_id))).scalar_one_or_none()
         if not prop:
-            await message.answer("❌ Объект неdb_base.py найден.")
+            await message.answer("❌ Объект не найден.")
             return
 
         try:
